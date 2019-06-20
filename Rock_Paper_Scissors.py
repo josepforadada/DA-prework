@@ -13,15 +13,24 @@ is_a_number = 0
 is_odd = 0
 user_win = 0
 mach_win = 0
+draws = 0
 
 while is_a_number == 0:
         try:
             option_game = int(option_game)
             is_a_number = 1
-            if not 1 <= option_game <= 2:
-                option_game = input("\nPlease, select with number 1 or 2")
+            if option_game == 1:
+                total_var = 3
+            if option_game == 2:
+                total_var = 5
+            if not option_game == 1 and not option_game == 2:
+                option_game = input("\nPlease, select with number 1 or 2: ")
+                if not option_game == "1" and not option_game == "2":
+                    is_a_number = 0
         except:
             option_game = input("\nPlease, select the game using numbers: ")
+            if not option_game == "1" and not option_game == "2":
+                    is_a_number = 0
 
 games_number = input("\nSelect the number of game rounds (1, 3, 5...): ")
 
@@ -49,21 +58,27 @@ game_options = {
 
 game_results = {
 
-    0: "This round is a draw.",
-    1: "User wins the round",
-    2: "Machine wins the round"
+    0: "\nThis round is a draw.",
+    1: "\nUser wins the round",
+    2: "\nMachine wins the round"
 }
-
+print("\n-------------------------------------------------")
 print("\nThe game will start... the winner is the first to win %d rounds" % games_number)
 
 def ask_user(num,round):
 
-    print("\n\nROUND %d" % round)
+    print("\n-------------------------------------------------")
+    print("\nROUND %d" % round)
+
+    print("\n\n**** press Q to quit the game ****")
     if num == 1:
         print("\n\t\t1 - Stone\n\t\t2 - Paper\n\t\t3 - Scissors")
-        return input("\n\t\tSelect an option: ")
-    else:
+
+        return input("\n\t\tSelect an  option: ")
+
+    if num == 2:
         (print("\n\t\t1 - Stone\n\t\t2 - Paper\n\t\t3 - Scissors\n\t\t4 - Lizard\n\t\t5 - Spock"))
+
         return input("\n\t\tSelect an option: ")
 
 def machine_choice(num):
@@ -75,9 +90,7 @@ def machine_choice(num):
 
 
 def compare(user,machine,num):
-     print(user)
-     print(machine)
-     print(num)
+
      while user == 1:
         if machine == 1:
             # 0 = Draw, # 1 = Win # 2 = Loose
@@ -86,7 +99,7 @@ def compare(user,machine,num):
             return (2)
         if machine == 3:
             return (1)
-        if num == 5:
+        if num == 2:
             if machine == 4:
                 return (1)
             else:
@@ -99,7 +112,7 @@ def compare(user,machine,num):
             return (0)
         if machine == 3:
             return (2)
-        if num == 5:
+        if num == 2:
             if machine == 4:
                 return (2)
             else:
@@ -112,7 +125,7 @@ def compare(user,machine,num):
             return (1)
         if machine == 3:
             return (0)
-        if num == 5:
+        if num == 2:
             if machine == 4:
                 return (1)
             else:
@@ -125,7 +138,7 @@ def compare(user,machine,num):
             return (1)
         if machine == 3:
             return (2)
-        if num == 5:
+        if num == 2:
             if machine == 4:
                 return (0)
             else:
@@ -138,20 +151,63 @@ def compare(user,machine,num):
             return (2)
         if machine == 3:
             return (1)
-        if num == 5:
+        if num == 2:
             if machine == 4:
                 return (2)
             else:
                 return (0)
+round = 1
+election_possible = "None"
 
-while user_win < 5 and mach_win < 5:
+total_games = 1
+exit = 0
 
-    election = ask_user(option_game,1)
+while user_win < games_number and mach_win < games_number:
 
-    print("\nUser's choice: %s\t\tMachine's choice: %s" % (game_options[int(election)].upper(), game_options[int(machine_choice(option_game))].upper()))
+    while election_possible == "None":
 
-    val = compare(int(election),machine_choice(option_game),option_game)
+        election = ask_user(int(option_game),round) # si no es int donava error
 
-    print(game_results[val])
+        try:
+            election_possible = str(game_options.get(int(election)))
 
-print("THE GAME IS OVER")
+            if int(election) == 0 or int(election) > total_var:
+                print("\nPLEASE ENTER A VALID NUMBER")
+                election_possible = "None"
+        except:
+            if str(election) == "Q" or str(election) == "q":
+                exit = 1
+                break
+            print("\nPLEASE ENTER A VALID NUMBER")
+            election_possible = "None"
+
+    if exit == 1:
+        break
+    election_machine = machine_choice(option_game)
+    print("\nUser's choice: %s\t\tMachine's choice: %s" % (game_options[int(election)].upper(), game_options[int(election_machine)].upper()))
+
+    val = compare(int(election),int(election_machine),int(option_game))
+
+    print(game_results[val].upper())
+    if val == 1:
+        user_win += 1
+    elif val == 2:
+        mach_win += 1
+    else:
+        draws += 1
+    print("\n\t\tTotal user's wins: %d\n\t\tTotal machine's wins: %d\n\t\tTotal draws: %d" % (user_win,mach_win,draws))
+    round += 1
+    total_games += 1
+    election_possible = "None"
+    exit = 0
+
+print("-------------------------------------------------")
+print("-------------------------------------------------")
+
+if user_win == games_number:
+    print("\n\t\tTHE GAME IS OVER, USER WINS")
+elif mach_win == games_number:
+    print("\n\t\tTHE GAME IS OVER, MACHINE WINS")
+else:
+    print("\n\t\tYOU EXIT THE GAME")
+print("\n-------------------------------------------------")
